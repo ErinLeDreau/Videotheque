@@ -44,7 +44,7 @@ public abstract class FichierVideo extends Video implements Convertible {
         thread.setDaemon(true);
     }
 
-    public FichierVideo convertir(String format) throws IOException, InterruptedException {
+    public FichierVideo convertir(String format) throws IOException, InterruptedException, ConversionImpossibleException {
         if(!format.equalsIgnoreCase("mp4") && !format.equalsIgnoreCase("avi")) {
             throw new ConversionImpossibleException("Format de conversion non supporté : " + format);
         }
@@ -88,4 +88,8 @@ public abstract class FichierVideo extends Video implements Convertible {
         return null;
     }
 
+    @Override
+    public String toString() {
+        return super.toString() + " [Chemin: " + chemin + "]";
+    }
 }

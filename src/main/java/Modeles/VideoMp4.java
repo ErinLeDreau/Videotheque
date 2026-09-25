@@ -25,4 +25,9 @@ public class VideoMp4 extends FichierVideo{
     public List<String> optionsEncodage() {
         return List.of("-crf 23", "-c:a aac");
     }
+
+    @Override
+    public String toString() {
+        return super.toString() + "support='" + this.getSupport();
+    }
 }

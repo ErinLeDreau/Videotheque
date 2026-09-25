@@ -26,4 +26,9 @@ public class VideoAvi extends FichierVideo {
     public List<String> optionsEncodage() {
         return List.of("-q:v 5", "-c:a libmp3lame");
     }
+
+    @Override
+    public String toString() {
+        return super.toString() + "support='" + this.getSupport();
+    }
 }
