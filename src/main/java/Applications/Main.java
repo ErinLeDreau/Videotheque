@@ -1,10 +1,9 @@
 package Applications;
 
-import Exceptions.SaisieInvalideException;
 import Modeles.Interfaces.GestionVideotheque;
 import Modeles.Videotheque;
+import Video.LecteurVideo;
 
-import java.time.DateTimeException;
 import java.util.InputMismatchException;
 
 public class Main {
@@ -21,6 +20,7 @@ public class Main {
                 c.afficherMenu();
                 System.out.print("Choix:");
                 choix = Controller.scan.nextInt();
+                Controller.scan.nextLine();
 
                 switch (choix) {
                     case 1:
@@ -41,6 +41,10 @@ public class Main {
                     case 6:
                         c.convertirVideo(videotheque);
                         break;
+                    case 7:
+                        LecteurVideo.arreterLectureActive();
+                        System.out.println("Lecture arrêtée.");
+                        break;
                     case 0:
                         System.out.println("Au revoir !");
                         break;
@@ -49,11 +53,11 @@ public class Main {
                 }
 
                 System.out.println();
-            }  catch (InputMismatchException e){
-                System.out.println("Erreur: " + e.getClass().getSimpleName());
+            } catch (InputMismatchException e) {
+                System.out.println("La saisie n'est pas valide. Veuillez entrer un nombre.");
                 Controller.scan.nextLine();
             } catch (Exception e) {
-                System.out.println("Erreur: "+ e.getMessage() + " (" + e.getClass().getSimpleName() + ")");
+                e.printStackTrace();
             }
 
         } while (choix != 0);

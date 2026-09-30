@@ -1,7 +1,6 @@
 package Modeles;
 
 import Modeles.Abstracts.FichierVideo;
-import Modeles.Abstracts.Video;
 
 import java.util.List;
 
@@ -12,8 +11,8 @@ public class VideoMp4 extends FichierVideo{
     }
 
     public VideoMp4(VideoAvi videoAvi){
-        String nouveauChemin = videoAvi.getChemin().replaceAll("\\.avi$", ".mp4");
-        super(videoAvi.getTitre(), videoAvi.getRealisateur(), videoAvi.getDateSortie(), videoAvi.getDuree(), videoAvi.getChemin());
+        String nouveauChemin = videoAvi.getChemin().replaceAll("(?i)\\.avi$", ".mp4");
+        super(videoAvi.getTitre(), videoAvi.getRealisateur(), videoAvi.getDateSortie(), videoAvi.getDuree(), nouveauChemin);
     }
 
     @Override
@@ -23,7 +22,7 @@ public class VideoMp4 extends FichierVideo{
 
     @Override
     public List<String> optionsEncodage() {
-        return List.of("-crf 23", "-c:a aac");
+        return List.of("-crf", "23", "-c:a", "aac");
     }
 
     @Override

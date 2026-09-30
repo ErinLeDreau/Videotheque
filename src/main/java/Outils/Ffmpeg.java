@@ -43,7 +43,7 @@ public final class Ffmpeg {
         return processus.waitFor(); // attend la fin de ffmpeg
     }
 
-    public static int lire(File fichier, String titreFenetre) throws IOException, InterruptedException {
+    public static Process demarrerLecture(File fichier, String titreFenetre) throws IOException {
         List<String> commande = new ArrayList<>();
         commande.add("ffplay");
         commande.add("-autoexit");
@@ -52,14 +52,6 @@ public final class Ffmpeg {
         commande.add(fichier.getAbsolutePath());
         ProcessBuilder pb = new ProcessBuilder(commande);
         pb.redirectErrorStream(true); // stderr fusionné dans stdout
-        Process processus = pb.start();
-
-        BufferedReader processOut = new BufferedReader(new InputStreamReader(processus.getInputStream()));
-        String line;
-        while ((line = processOut.readLine()) != null) {
-            System.out.println(line);
-        }
-
-        return processus.waitFor(); // attend la fin de ffplay
+        return pb.start();
     }
 }

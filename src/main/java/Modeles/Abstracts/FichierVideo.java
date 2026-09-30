@@ -1,11 +1,13 @@
 package Modeles.Abstracts;
 
 import Exceptions.ConversionImpossibleException;
+import Exceptions.FichierVideoException;
 import Exceptions.LectureImpossibleException;
 import Modeles.Interfaces.Convertible;
 import Modeles.VideoAvi;
 import Modeles.VideoMp4;
 import Outils.Ffmpeg;
+import Video.LecteurVideo;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,15 +38,18 @@ public abstract class FichierVideo extends Video implements Convertible {
     @Override
     public void lire() throws LectureImpossibleException {
         File fichier = new File(chemin);
-        if (!fichier.exists()) {
+        if (!fichier.isFile()) {
             throw new LectureImpossibleException("Le fichier vidéo n'existe pas : " + chemin);
         }
 
-        Thread thread = new Thread();
-        thread.setDaemon(true);
+        try {
+            new LecteurVideo(this).demarrer();
+        } catch (FichierVideoException e) {
+            throw new LectureImpossibleException(e.getMessage());
+        }
     }
 
-    public FichierVideo convertir(String format) throws IOException, InterruptedException, ConversionImpossibleException {
+    public FichierVideo convertir(String format) throws ConversionImpossibleException {
         if(!format.equalsIgnoreCase("mp4") && !format.equalsIgnoreCase("avi")) {
             throw new ConversionImpossibleException("Format de conversion non supporté : " + format);
         }
@@ -54,38 +59,49 @@ public abstract class FichierVideo extends Video implements Convertible {
         }
 
         if(format.equalsIgnoreCase("mp4")){
-            //TODO remplacer l'extension du chemin par .avi, créer l'objet VideoAvi
-            //TODO le convertir en utilisant les options d'encodage de VideoAvi et la fonction convertir de Ffmpeg
-            //TODO retourner l'objet VideoAvi
-
-            assert this instanceof VideoAvi;
+            if (!(this instanceof VideoAvi)) {
+                throw new ConversionImpossibleException("Le type de la vidéo ne correspond pas au format source AVI.");
+            }
             VideoMp4 videoMp4 = new VideoMp4((VideoAvi) this);
 
             File fichierEntrant = new File(this.getChemin());
             File fichierSortant = new File(videoMp4.getChemin());
 
-            Ffmpeg.convertir(fichierEntrant, fichierSortant, videoMp4.optionsEncodage());
+            try{
+                int codeRetour = Ffmpeg.convertir(fichierEntrant, fichierSortant, videoMp4.optionsEncodage());
+                if (codeRetour != 0) {
+                    throw new ConversionImpossibleException("FFmpeg a échoué (code " + codeRetour + ").");
+                }
+            } catch (IOException | InterruptedException | ConversionImpossibleException e) {
+                throw new ConversionImpossibleException("Erreur lors de la conversion : " + e.getMessage());
+            }
 
             return videoMp4;
         }
 
         if(format.equalsIgnoreCase("avi")){
-            //TODO remplacer l'extension du chemin par .mp4, créer l'objet VideoMp4
-            //TODO le convertir en utilisant les options d'encodage de VideoMp4 et la fonction convertir de Ffmpeg
-            //TODO retourner l'objet VideoMp4
-
-            assert this instanceof VideoMp4;
+            if (!(this instanceof VideoMp4)) {
+                throw new ConversionImpossibleException("Le type de la vidéo ne correspond pas au format source MP4.");
+            }
             VideoAvi videoAvi = new VideoAvi((VideoMp4) this);
 
             File fichierEntrant = new File(this.getChemin());
             File fichierSortant = new File(videoAvi.getChemin());
 
-            Ffmpeg.convertir(fichierEntrant, fichierSortant, videoAvi.optionsEncodage());
+            try {
+                int codeRetour = Ffmpeg.convertir(fichierEntrant, fichierSortant, videoAvi.optionsEncodage());
+                if (codeRetour != 0) {
+                    throw new ConversionImpossibleException("FFmpeg a échoué (code " + codeRetour + ").");
+                }
+            } catch (IOException | InterruptedException | ConversionImpossibleException e) {
+                throw new ConversionImpossibleException("Erreur lors de la conversion : " + e.getMessage());
+            }
+
 
             return videoAvi;
         }
 
-        return null;
+        throw new ConversionImpossibleException("Format de conversion non supporté : " + format);
     }
 
     @Override

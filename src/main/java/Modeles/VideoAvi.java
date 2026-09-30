@@ -1,7 +1,6 @@
 package Modeles;
 
 import Modeles.Abstracts.FichierVideo;
-import Modeles.Abstracts.Video;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -13,7 +12,7 @@ public class VideoAvi extends FichierVideo {
     }
 
     public VideoAvi(VideoMp4 videoMp4){
-        String nouveauChemin = videoMp4.getChemin().replaceAll("\\.mp4$", ".avi");
+        String nouveauChemin = videoMp4.getChemin().replaceAll("(?i)\\.mp4$", ".avi");
         super(videoMp4.getTitre(), videoMp4.getRealisateur(), videoMp4.getDateSortie(), videoMp4.getDuree(), nouveauChemin);
     }
 
@@ -24,7 +23,7 @@ public class VideoAvi extends FichierVideo {
 
     @Override
     public List<String> optionsEncodage() {
-        return List.of("-q:v 5", "-c:a libmp3lame");
+        return List.of("-q:v", "5", "-c:a", "libmp3lame");
     }
 
     @Override

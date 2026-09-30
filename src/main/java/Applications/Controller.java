@@ -1,13 +1,11 @@
 package Applications;
 
 import Exceptions.*;
-import Modeles.Abstracts.FichierVideo;
 import Modeles.Abstracts.Video;
 import Modeles.Dvd;
 import Modeles.Interfaces.GestionVideotheque;
 import Modeles.VideoAvi;
 import Modeles.VideoMp4;
-import Modeles.Videotheque;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -25,6 +23,7 @@ public class Controller {
         System.out.println("4. Supprimer une vidéo");
         System.out.println("5. Lire une vidéo");
         System.out.println("6. Convertir une vidéo");
+        System.out.println("7. Arrêter la lecture");
         System.out.println("0. Quitter");
         System.out.println("=======================");
     }
@@ -32,8 +31,9 @@ public class Controller {
     public void ajouterVideo(GestionVideotheque videotheque) throws SaisieInvalideException, VideoDejaExistanteException {
         System.out.println("Support (1 = DVD, 2 = fichier MP4, 3 = Fichier AVI) : ");
         int choix = scan.nextInt();
+        scan.nextLine();
 
-        Video created = null;
+        Video created;
         switch (choix) {
             case 1:
                 created = creerDVD();
@@ -165,6 +165,7 @@ public class Controller {
     private int saisieZone() throws SaisieInvalideException {
         System.out.print("Zone:");
         int zone = scan.nextInt();
+        scan.nextLine();
         if (zone < 0) {
             throw new SaisieInvalideException("Zone ne peut pas être négative");
         }
@@ -183,12 +184,11 @@ public class Controller {
     }
 
     private String saisieChemin() throws SaisieInvalideException {
-        System.out.print("Chemin du fichier (exemple musiques/bidule.mp3):");
+        System.out.print("Chemin du fichier (exemple videos/bidule.mp4):");
         String chemin = scan.nextLine();
         if (chemin.isEmpty()) {
             throw new SaisieInvalideException("Chemin doit être présent");
         }
-        //TODO, peut être un regex pour valider le format ?
         return chemin;
     }
 
