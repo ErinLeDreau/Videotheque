@@ -95,7 +95,7 @@ public class Controller {
     }
 
     public void lancerWebcam() {
-        StreamWebcam stream = new StreamWebcam("172.16.120.28", "live");
+        StreamWebcam stream = new StreamWebcam("172.16.120.28", "erin");
         stream.lancerWebcam();
     }
 
