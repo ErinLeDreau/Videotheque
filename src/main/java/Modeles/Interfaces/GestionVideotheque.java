@@ -17,4 +17,6 @@ public interface GestionVideotheque {
     Video convertirVideo(String titre, String formatCible)
             throws VideoIntrouvableException, VideothequeVideException,
             ConversionImpossibleException, SaisieInvalideException;
+
+    void initList();
 }

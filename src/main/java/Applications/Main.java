@@ -13,7 +13,17 @@ public class Main {
     public static void main(String[] args) {
 
         Controller c = new Controller();
+
+        videotheque.initList();
         int choix = -1;
+        String pass;
+
+        do {
+            pass = c.saisirMdp();
+            if(!Auth.authentification(pass)){
+                System.out.println("Mot de passe incorrect");
+            }
+        }while (!Auth.authentification(pass));
 
         do {
             try {

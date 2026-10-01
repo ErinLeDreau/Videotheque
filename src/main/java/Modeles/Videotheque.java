@@ -6,6 +6,8 @@ import Modeles.Abstracts.Video;
 import Modeles.Interfaces.GestionVideotheque;
 
 import java.io.File;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -42,6 +44,14 @@ public class Videotheque implements GestionVideotheque {
         throw new VideoDejaExistanteException("Cette vidéo existe déjà !");
     }
 
+    public void initList(){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+        LocalDate date = LocalDate.parse("10/12/2010", formatter);
+        getVideotheque().add(new Dvd("Film1", "Christopher Nolan", date, 148, "numero123", 1));
+        getVideotheque().add(new VideoMp4("Film2", "Lana Wachowski, Lilly Wachowski", date, 136, "C:\\Users\\CDAX24\\Downloads\\Denis-Ah.mp4"));
+        getVideotheque().add(new VideoAvi("Film3", "James Cameron", date, 162, "C:\\Users\\CDAX24\\Downloads\\meme-compil.avi"));
+    }
     @Override
     public void listerVideos() throws VideothequeVideException {
         if (getVideotheque().isEmpty()) {

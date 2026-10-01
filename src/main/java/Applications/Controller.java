@@ -217,4 +217,11 @@ public class Controller {
         }
         return format;
     }
+
+    public String saisirMdp(){
+
+        System.out.println("Saisir mot de passe :");
+        return scan.nextLine();
+
+    }
 }
