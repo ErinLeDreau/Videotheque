@@ -43,7 +43,7 @@ public final class Ffmpeg {
         return processus.waitFor(); // attend la fin de ffmpeg
     }
 
-    public static Process demarrerLecture(File fichier, String titreFenetre) throws IOException {
+    public static Process lire(File fichier, String titreFenetre) throws IOException {
         List<String> commande = new ArrayList<>();
         commande.add("ffplay");
         commande.add("-autoexit");
@@ -52,6 +52,7 @@ public final class Ffmpeg {
         commande.add(fichier.getAbsolutePath());
         ProcessBuilder pb = new ProcessBuilder(commande);
         pb.redirectErrorStream(true); // stderr fusionné dans stdout
+        pb.redirectOutput(ProcessBuilder.Redirect.DISCARD); // on ne veut pas afficher la sortie de ffplay
         return pb.start();
     }
 }

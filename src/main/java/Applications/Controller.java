@@ -76,10 +76,9 @@ public class Controller {
     }
 
     public void convertirVideo(GestionVideotheque videotheque) throws VideothequeVideException, VideoIntrouvableException, SaisieInvalideException, ConversionImpossibleException {
-        System.out.println("Titre de la vidéo à supprimer:");
+        System.out.println("Titre de la vidéo à convertir:");
         String titre = saisieTitre();
 
-        System.out.println("Format de conversion (AVI ou MP4):");
         String format = saisieFormat();
 
         videotheque.convertirVideo(titre, format);

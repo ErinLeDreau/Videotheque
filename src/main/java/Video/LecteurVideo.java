@@ -7,11 +7,11 @@ import Modeles.VideoMp4;
 import Outils.Ffmpeg;
 
 import java.io.File;
-import java.util.Locale;
 
 public class LecteurVideo implements Runnable{
 
-    private static LecteurVideo lecteurActif;
+    private static volatile LecteurVideo lecteurActif;
+    private volatile boolean arretDemande;
 
     private final FichierVideo video;
     private volatile Process processus;
@@ -31,7 +31,7 @@ public class LecteurVideo implements Runnable{
                     "Le fichier vidéo n'existe pas ou n'est pas un fichier : " + video.getChemin());
         }
 
-        String nomFichier = fichier.getName().toLowerCase(Locale.ROOT);
+        String nomFichier = fichier.getName().toLowerCase();
         String formatAttendu;
         if (video instanceof VideoMp4) {
             formatAttendu = ".mp4";
@@ -53,31 +53,35 @@ public class LecteurVideo implements Runnable{
 
 
     public synchronized void demarrer(){
-        if (lecteurActif != null && lecteurActif != this) {
-            lecteurActif.arreter();
-        }
-        lecteurActif = this;
         thread = new Thread(this, "lecture-" + video.getTitre());
         thread.setDaemon(true);
         thread.start();
+        if(lecteurActif != null) {
+            //On force l'interruption de la lecture en cours si il y en a déjà une
+            arreterLecteurActif();
+        }
+        lecteurActif = this;
     }
 
-    public synchronized void arreter(){
+    public void arreter(){
+        arretDemande = true;
         if (processus != null && processus.isAlive()) {
             processus.destroy();
         }
         if (thread != null) {
             thread.interrupt();
         }
-        if (lecteurActif == this) {
-            lecteurActif = null;
-        }
     }
 
-    public static synchronized void arreterLectureActive() {
-        if (lecteurActif != null) {
-            lecteurActif.arreter();
+    public static boolean arreterLecteurActif() {
+        LecteurVideo lecteur = lecteurActif;
+
+        if (lecteur == null) {
+            return false;
         }
+
+        lecteur.arreter();
+        return true;
     }
 
     public boolean estEnLecture() {
@@ -85,9 +89,13 @@ public class LecteurVideo implements Runnable{
     }
 
     @Override
-    public void run() {
+    public synchronized void run() {
         try {
-            processus = Ffmpeg.demarrerLecture(new File(video.getChemin()), video.getTitre());
+            if (arretDemande) {
+                return;
+            }
+
+            processus = Ffmpeg.lire(new File(video.getChemin()), video.getTitre());
             int codeRetour = processus.waitFor();
             if (codeRetour != 0) {
                 System.out.println("La lecture a échoué (code " + codeRetour + ").");
@@ -96,13 +104,14 @@ public class LecteurVideo implements Runnable{
             Thread.currentThread().interrupt();
             System.out.println("La lecture a été interrompue.");
         } catch (java.io.IOException e) {
-            System.out.println("Erreur lors de la lecture de la vidéo : " + e.getMessage());
+            if (!arretDemande) {
+                System.out.println("Erreur lors de la lecture de la vidéo : " + e.getMessage());
+            }
         } finally {
             processus = null;
-            synchronized (LecteurVideo.class) {
-                if (lecteurActif == this) {
-                    lecteurActif = null;
-                }
+
+            if (lecteurActif == this) {
+                lecteurActif = null;
             }
         }
     }

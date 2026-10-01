@@ -42,8 +42,7 @@ public class Main {
                         c.convertirVideo(videotheque);
                         break;
                     case 7:
-                        LecteurVideo.arreterLectureActive();
-                        System.out.println("Lecture arrêtée.");
+                        c.arreterVideo();
                         break;
                     case 0:
                         System.out.println("Au revoir !");
