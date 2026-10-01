@@ -6,6 +6,8 @@ import Modeles.Dvd;
 import Modeles.Interfaces.GestionVideotheque;
 import Modeles.VideoAvi;
 import Modeles.VideoMp4;
+import Video.LecteurVideo;
+import Video.StreamWebcam;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -75,6 +77,14 @@ public class Controller {
         videotheque.lireVideo(titre);
     }
 
+    public void arreterVideo() {
+        if (LecteurVideo.arreterLecteurActif()) {
+            System.out.println("Lecture arrêtée.");
+        } else {
+            System.out.println("Aucune vidéo n'est actuellement en lecture.");
+        }
+    }
+
     public void convertirVideo(GestionVideotheque videotheque) throws VideothequeVideException, VideoIntrouvableException, SaisieInvalideException, ConversionImpossibleException {
         System.out.println("Titre de la vidéo à convertir:");
         String titre = saisieTitre();
@@ -82,6 +92,11 @@ public class Controller {
         String format = saisieFormat();
 
         videotheque.convertirVideo(titre, format);
+    }
+
+    public void lancerWebcam() {
+        StreamWebcam stream = new StreamWebcam("172.16.120.28", "live");
+        stream.lancerWebcam();
     }
 
     private Dvd creerDVD () throws SaisieInvalideException {

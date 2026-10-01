@@ -84,6 +84,11 @@ public class LecteurVideo implements Runnable{
         return true;
     }
 
+    public void attendreFin() throws InterruptedException {
+        if (thread != null) {
+            thread.join();
+        }
+    }
     public boolean estEnLecture() {
         return processus != null && processus.isAlive();
     }
@@ -113,6 +118,14 @@ public class LecteurVideo implements Runnable{
             if (lecteurActif == this) {
                 lecteurActif = null;
             }
+        }
+    }
+
+    public static void voirLecteurActif() {
+        if (lecteurActif != null) {
+            System.out.println("Lecture en cours : " + lecteurActif.video.getTitre());
+        } else {
+            System.out.println("Aucune lecture en cours.");
         }
     }
 }

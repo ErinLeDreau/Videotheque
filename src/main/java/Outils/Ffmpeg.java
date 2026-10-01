@@ -55,4 +55,40 @@ public final class Ffmpeg {
         pb.redirectOutput(ProcessBuilder.Redirect.DISCARD); // on ne veut pas afficher la sortie de ffplay
         return pb.start();
     }
+
+    public static Process webcam(String streamUrl, String streamKey) throws IOException {
+        // stream url "rtmp://a.rtmp.youtube.com/live2"
+        //temp key dk7g-zakt-qb90-8u7x-6t12
+        //ffmpeg -f dshow -i video="HP True Vision HD Camera":audio="Réseau de microphones (Technologie Intel® Smart Sound pour microphones numériques)" -vcodec libx264 -preset ultrafast -tune zerolatency -b:v 1000k -maxrate 1000k -bufsize 2000k -pix_fmt yuv420p -g 60 -f flv "rtmp://a.rtmp.youtube.com/live2/wrrx-t672-z4xr-g307-bbzf"
+        List<String> commande = new ArrayList<>();
+        commande.add("ffmpeg");
+        commande.add("-f");
+        commande.add("dshow");
+        commande.add("-i");
+        commande.add("video=HP True Vision HD Camera:audio=Réseau de microphones (Technologie Intel® Smart Sound pour microphones numériques)");
+        commande.add("-vcodec");
+        commande.add("libx264");
+        commande.add("-preset");
+        commande.add("ultrafast");
+        commande.add("-tune");
+        commande.add("zerolatency");
+        commande.add("-b:v");
+        commande.add("1000k");
+        commande.add("-maxrate");
+        commande.add("1000k");
+        commande.add("-bufsize");
+        commande.add("2000k");
+        commande.add("-pix_fmt");
+        commande.add("yuv420p");
+        commande.add("-g");
+        commande.add("60");
+        commande.add("-f");
+        commande.add("flv");
+        commande.add(streamUrl + "/" + streamKey);
+        System.out.println("Commande ffmpeg pour le streaming de la webcam : " + String.join(" ", commande));
+        ProcessBuilder pb = new ProcessBuilder(commande);
+        pb.redirectErrorStream(true); // stderr fusionné dans stdout
+        //pb.redirectOutput(ProcessBuilder.Redirect.DISCARD); // on ne veut pas afficher la sortie de ffplay
+        return pb.start();
+    }
 }

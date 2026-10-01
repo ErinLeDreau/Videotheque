@@ -44,6 +44,12 @@ public class Main {
                     case 7:
                         c.arreterVideo();
                         break;
+                    case 8:
+                        LecteurVideo.voirLecteurActif();
+                        break;
+                    case 9:
+                        c.lancerWebcam();
+                        break;
                     case 0:
                         System.out.println("Au revoir !");
                         break;
